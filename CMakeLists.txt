@@ -4,24 +4,27 @@
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt
 
-cmake_minimum_required(VERSION 3.5...4.20)
+cmake_minimum_required(VERSION 3.28...4.4)
 
 project(boost_type_index VERSION "${BOOST_SUPERPROJECT_VERSION}" LANGUAGES CXX)
 
-if (BOOST_USE_MODULES)
+if(BOOST_USE_MODULES)
     add_library(boost_type_index)
-    target_sources(boost_type_index
-      PUBLIC
-        FILE_SET CXX_MODULES
-        BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
-        FILES "${CMAKE_CURRENT_SOURCE_DIR}/modules/boost_type_index.cppm"
+    target_sources(boost_type_index PUBLIC
+        FILE_SET modules_public
+            TYPE CXX_MODULES
+            FILES modules/boost_type_index.cppm
     )
 
     target_compile_features(boost_type_index PUBLIC cxx_std_20)
     target_compile_definitions(boost_type_index PUBLIC BOOST_USE_MODULES)
-    if ((CMAKE_CXX_STANDARD IN_LIST CMAKE_CXX_COMPILER_IMPORT_STD) AND CMAKE_CXX_MODULE_STD)
-        target_compile_features(boost_type_index PRIVATE cxx_std_23)
-        target_compile_definitions(boost_type_index PRIVATE BOOST_TYPE_INDEX_USE_STD_MODULE)
+    set(__boost_cxx_standard ${CMAKE_CXX_STANDARD})
+    if(NOT __boost_cxx_standard)
+        set(__boost_cxx_standard 23)
+    endif()
+    if(CMAKE_CXX_COMPILER_IMPORT_STD AND ${__boost_cxx_standard} IN_LIST CMAKE_CXX_COMPILER_IMPORT_STD)
+        target_compile_definitions(boost_type_index PUBLIC BOOST_TYPE_INDEX_USE_STD_MODULE)
+        target_compile_features(boost_type_index PUBLIC cxx_std_${__boost_cxx_standard})
         message(STATUS "Using `import std;`")
     else()
         message(STATUS "`import std;` is not available")
@@ -36,12 +39,12 @@ target_include_directories(boost_type_index ${__scope} include)
 add_library(Boost::type_index ALIAS boost_type_index)
 
 target_link_libraries(boost_type_index
-  ${__scope}
-    Boost::config
-    Boost::container_hash
-    Boost::throw_exception
+    ${__scope}
+        Boost::config
+        Boost::container_hash
+        Boost::throw_exception
 )
 
 if(BUILD_TESTING)
-  add_subdirectory(test)
+    add_subdirectory(test)
 endif()
