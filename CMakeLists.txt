@@ -12,7 +12,10 @@ cmake_minimum_required(VERSION 3.28...4.4)
 project(boost_type_index VERSION "${BOOST_SUPERPROJECT_VERSION}" LANGUAGES CXX)
 
 if(PROJECT_IS_TOP_LEVEL)
-    find_package(Boost 1.91.0 CONFIG)
+    set(BUILD_TESTING ON)
+    enable_testing()
+    find_package(Threads)
+    find_package(Boost 1.91.0 CONFIG REQUIRED)
 endif()
 
 # -----------------------------------------------------------------------------
@@ -57,16 +60,16 @@ if(BOOST_USE_MODULES)
 
 else()
 
+    # Verify interface headers only at top level
+    if(PROJECT_IS_TOP_LEVEL)
+        set(CMAKE_VERIFY_INTERFACE_HEADER_SETS ON)
+    endif()
+
     # Modules disabled -> INTERFACE library
     add_library(boost_type_index INTERFACE)
 
     # If modules are disabled, require C++17 for headers
     target_compile_features(boost_type_index INTERFACE cxx_std_17)
-
-    # Verify interface headers only at top level
-    if(PROJECT_IS_TOP_LEVEL)
-        set(CMAKE_VERIFY_INTERFACE_HEADER_SETS ON)
-    endif()
 
     set(__scope INTERFACE)
 
@@ -114,7 +117,10 @@ else()
         ${__scope}
         Boost::config
         Boost::container_hash
+        Boost::core
+        Boost::smart_ptr
         Boost::throw_exception
+        Boost::unordered
     )
 endif()
 

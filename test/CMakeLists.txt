@@ -25,7 +25,7 @@ target_link_libraries(boost_type_index_test_lib_anonymous_rtti PRIVATE Boost::ty
 
 function(boost_type_index_test name sources)
     add_executable(${name} "${sources}")
-    target_link_libraries(${name} PRIVATE Boost::core ${ARGN})
+    target_link_libraries(${name} PRIVATE Boost::type_index ${ARGN})
     add_test(NAME ${name} COMMAND ${name})
     add_dependencies(tests ${name})
 endfunction()
@@ -49,16 +49,13 @@ function(boost_type_index_add_target target)
   target_include_directories(${target} ${__scope} ../include)
   target_link_libraries(${target}
     ${__scope}
-        Boost::config
-        Boost::container_hash
-        Boost::throw_exception
   )
 endfunction()
 
 boost_type_index_test(type_index_test type_index_test.cpp Boost::type_index)
 boost_type_index_test(type_index_constexpr_test type_index_constexpr_test.cpp Boost::type_index)
 boost_type_index_test(type_index_ctti_print_name_test ctti_print_name.cpp Boost::type_index)
-boost_type_index_test(type_index_runtime_cast_test type_index_runtime_cast_test.cpp Boost::type_index Boost::smart_ptr)
+boost_type_index_test(type_index_runtime_cast_test type_index_runtime_cast_test.cpp Boost::type_index)
 
 boost_type_index_test(type_index_crossmodule_test testing_crossmodule.cpp Boost::type_index boost_type_index_test_lib_rtti)
 boost_type_index_test(type_index_crossmodule_anonymous_test testing_crossmodule_anonymous.cpp Boost::type_index boost_type_index_test_lib_anonymous_rtti)
@@ -78,7 +75,7 @@ foreach (testsourcefile ${EXAMPLE_FILES})
       continue()
     endif()
 
-    boost_type_index_test(type_index_${testname}_example ${testsourcefile} Boost::type_index Boost::unordered)
+    boost_type_index_test(type_index_${testname}_example ${testsourcefile} Boost::type_index)
     target_include_directories(type_index_${testname}_example PRIVATE ../examples)
 
     if (_use_import_std)
@@ -89,7 +86,7 @@ foreach (testsourcefile ${EXAMPLE_FILES})
       continue()
     endif()
 
-    boost_type_index_test(type_index_${testname}_no_rtti_example ${testsourcefile} Boost::type_index_no_rtti Boost::unordered)
+    boost_type_index_test(type_index_${testname}_no_rtti_example ${testsourcefile} Boost::type_index_no_rtti)
     target_include_directories(type_index_${testname}_no_rtti_example PRIVATE ../examples)
 endforeach()
 
