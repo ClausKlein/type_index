@@ -4,21 +4,18 @@
 
 cmake_minimum_required(VERSION 3.28...4.4)
 
-set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "451f2fe2-a8a2-47c3-bc32-94786d8fc91b")
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.4.0")
+    set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "f35a9ac6-8463-4d38-8eec-5d6008153e7d")
+else()
+    set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "451f2fe2-a8a2-47c3-bc32-94786d8fc91b")
+endif()
 
 project(type_index_subdir_test LANGUAGES CXX)
 
-foreach(dep IN ITEMS
-    assert
-    config
-    core
-    container_hash
-    describe
-    mp11
-    smart_ptr
-    throw_exception
-    unordered
-    predef
+foreach(
+    dep
+    IN
+    ITEMS assert config core container_hash describe mp11 smart_ptr throw_exception unordered predef
 )
     add_subdirectory(../../../${dep} boostorg/${dep})
 endforeach()
@@ -36,7 +33,8 @@ if(BOOST_USE_MODULES)
     target_link_libraries(boost_type_index_module_usage_mu PRIVATE Boost::type_index)
     add_test(NAME boost_type_index_module_usage_mu COMMAND boost_type_index_module_usage_mu)
 else()
-    list(APPEND RUN_TESTS_SOURCES
+    list(
+        APPEND RUN_TESTS_SOURCES
         compare_ctti_stl.cpp
         ctti_print_name.cpp
         track_13621.cpp

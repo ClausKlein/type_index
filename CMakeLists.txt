@@ -27,20 +27,13 @@ option(BOOST_USE_MODULES "Build Boost using C++ modules" OFF)
 # Determine target type and sources
 # -----------------------------------------------------------------------------
 if(BOOST_USE_MODULES)
-
     # Ensure CMAKE_CXX_STANDARD is set for module detection
     if(NOT DEFINED CMAKE_CXX_STANDARD)
         set(CMAKE_CXX_STANDARD 20)
     endif()
 
     add_library(boost_type_index)
-    target_sources(
-        boost_type_index
-        PUBLIC
-            FILE_SET modules_public
-                TYPE CXX_MODULES
-                FILES modules/boost_type_index.cppm
-    )
+    target_sources(boost_type_index PUBLIC FILE_SET modules_public TYPE CXX_MODULES FILES modules/boost_type_index.cppm)
 
     # Require C++20 for modules
     target_compile_features(boost_type_index PUBLIC cxx_std_${CMAKE_CXX_STANDARD})
@@ -72,14 +65,13 @@ else()
     target_compile_features(boost_type_index INTERFACE cxx_std_17)
 
     set(__scope INTERFACE)
-
 endif()
 
 # -----------------------------------------------------------------------------
 # Include headers
 # -----------------------------------------------------------------------------
 # Note: usable starting with cmake v3.23
-if(NOT CMAKE_VERSION VERSION_LESS 3.23)
+if(NOT CMAKE_VERSION VERSION_LESS 3.23 AND BOOST_USE_MODULES)
     target_sources(
         boost_type_index
         PUBLIC
@@ -113,7 +105,8 @@ endif()
 if(PROJECT_IS_TOP_LEVEL)
     target_link_libraries(boost_type_index ${__scope} Boost::headers)
 else()
-    target_link_libraries(boost_type_index
+    target_link_libraries(
+        boost_type_index
         ${__scope}
         Boost::config
         Boost::container_hash
