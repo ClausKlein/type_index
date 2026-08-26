@@ -9,8 +9,6 @@
 module;
 
 #include <version>
-#include <cstddef>
-#include <cstdint>
 
 #if __has_include(<cxxabi.h>)
 #  include <cxxabi.h>
@@ -22,6 +20,8 @@ module;
 #include <boost/throw_exception.hpp>
 
 #ifndef BOOST_TYPE_INDEX_USE_STD_MODULE
+#include <cstdint>
+#include <cstddef>
 #include <cstring>
 #include <cstdlib>
 #include <iosfwd>

@@ -3,3 +3,5 @@ doc/html
 build*
 .cache
 .vscode
+compile_commands.json
+GNUmakefile
